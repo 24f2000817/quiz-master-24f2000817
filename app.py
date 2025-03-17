@@ -1,13 +1,11 @@
 
 from flask import Flask, render_template
-from database import (
+from controllers.database import (
     db
 )
-
+from controllers.config import config
 app = Flask(__name__)
-# configure the SQLite database, relative to the app instance folder
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project.sqlite3"
-# initialize the app with the extension
+app.config.from_object(config)
 db.init_app(app)
 
 with app.app_context():

@@ -5,27 +5,18 @@ from datetime import date, timedelta
 db = SQLAlchemy()
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
+    user_email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(25), nullable=False)
-    Fullname = db.Column(db.String(100), nullable=False)
-    Qualification = db.Column(db.String(100), nullable=False)
-    DOB = db.Column(db.Date , nullable=False)
+    qualification = db.Column(db.String(100), nullable=False)
+    dob = db.Column(db.Date , nullable=False)
+    role = db.Column(db.String(10), nullable=False)
     
     scores = db.relationship('Score', backref='user', lazy=True)
 
     def __repr__(self):
         return f"<User(id={self.id}, username={self.username})>"
-
-class Admin(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), unique=True, nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(100), nullable=False)
-
-    def __repr__(self):
-        return f"<Admin(id={self.id}, username={self.username})>"
 
 class Subject(db.Model):
 

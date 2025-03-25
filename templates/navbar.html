@@ -17,20 +17,29 @@
           {% else %}
             {% if session.get('user_role', None) == 'admin' %}
               <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="admindashboard">Home</a>
+                <a class="nav-link active" aria-current="page" href="{{ url_for('home')}}">Home</a>
               </li>
               <li class="nav-item">
-                <a class = "nav-link active" aria-current="page" href="#">Quiz</a>
+                <a class = "nav-link active" aria-current="page" href="{{url_for('users')}}">Users</a>
+              </li>
+              <li class="nav-item">
+                <a class = "nav-link active" aria-current="page" href="{{url_for('quiz_management')}}">Quiz</a>
+              </li>
+              <li class="nav-item">
+                <a class = "nav-link active" aria-current="page" href="#">Summary</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="{{ url_for('logout')}}">Logout</a>
               </li>
             {% else %}
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="userdashboard.html">Home</a>
+              <a class="nav-link active" aria-current="page" href="{{ url_for('home')}}">Home</a>
             </li>
               <li class="nav-item">
                 <a class = "nav-link active" aria-current="page" href="#">Scores</a>
+              </li>
+              <li class="nav-item">
+                <a class = "nav-link active" aria-current="page" href="#">Summary</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="{{ url_for('logout')}}">Logout</a>

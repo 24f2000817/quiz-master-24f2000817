@@ -1,6 +1,6 @@
 from app import app
 from flask import render_template, request, redirect, url_for, flash, session
-from controllers.database import User, db
+from controllers.database import *
 from datetime import datetime
 
 @app.route("/login" , methods = ["GET","POST"])
@@ -39,8 +39,10 @@ def login():
         session["user_role"] = user.role
 
         flash("...Login Successful...")
+        subjects = Subject.query.all()
+        chapters = Chapter.query.all()
+        return render_template("home.html", subjects = subjects, chapters = chapters)
 
-        return redirect(url_for("home"))
 
 @app.route("/logout")
 def logout():

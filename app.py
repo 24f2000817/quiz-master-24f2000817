@@ -24,11 +24,17 @@ with app.app_context():
         db.session.add(user_admin)
     db.session.commit()
 
-@app.route("/")
-def home():
-    return render_template("home.html")
-
 from controllers.authentication import *
+from controllers.routes import *
+from controllers.edit_routes import *
+
+def no_of_questions(chapter_id):
+    chapter = Chapter.query.filter_by(id = chapter_id).first()
+
+    no_of_questions = sum([len(quiz.questions) for quiz in chapter.quizzes])
+    return no_of_questions
+
+app.jinja_env.globals.update(no_of_questions = no_of_questions)
 
 if __name__ == "__main__":
     app.run(debug=True)

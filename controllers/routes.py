@@ -8,8 +8,7 @@ def home():
     subjects = Subject.query.all()
     chapters = Chapter.query.all()
     quizzes = Quiz.query.all()
-    questions = Question.query.all()
-    return render_template("home.html", subjects = subjects, chapters = chapters, quizzes = quizzes, questions = questions)
+    return render_template("home.html", subjects = subjects, chapters = chapters, quizzes = quizzes)
 
 @app.route("/add_subject" , methods = ["GET","POST"])
 def add_subject():
@@ -111,15 +110,9 @@ def add_quiz():
         if request.method == "POST":
             chapters = Chapter.query.all()
             chapter_id = request.form.get("chapter_id",None)
-            title = request.form.get("title",None)
             date_of_quiz = request.form.get("date",None)
-            time_of_quiz = request.form.get("time",None)
             duration = request.form.get("duration",None)
             remarks = request.form.get("remarks",None)
-
-            if not title:
-                flash("Title is required")
-                return redirect(url_for("add_quiz",chapters = chapters))
 
             if not chapter_id:
                 flash("Chapter is required")
@@ -127,10 +120,6 @@ def add_quiz():
             
             if not date_of_quiz:
                 flash("Date is required")
-                return redirect(url_for("add_quiz", chapters = chapters))
-            
-            if not time_of_quiz:
-                flash("Time is required")
                 return redirect(url_for("add_quiz", chapters = chapters))
             
             if not duration:
@@ -143,14 +132,11 @@ def add_quiz():
                 return redirect(url_for("add_quiz", chapters = chapters))
             
             date_of_quiz = datetime.strptime(date_of_quiz, "%Y-%m-%d").date()
-            time_of_quiz = datetime.strptime(time_of_quiz, "%H:%M").time()
             duration = int(duration)
 
             new_quiz = Quiz(
                 chapter_id = chapter_id,
-                title = title,
                 date_of_quiz = date_of_quiz,
-                time_of_quiz = time_of_quiz,
                 duration = duration,
                 remarks = remarks
             )
@@ -360,4 +346,93 @@ def delete_user(user_id):
     else:
         flash("You are not authorized to access this page")
         return redirect(url_for("home"))
+    
+@app.route("/attempt_quiz/<int:quiz_id>" , methods = ["GET","POST"])
+def attempt_quiz(quiz_id):
+    if session.get('user_role', None) == 'user':
+        quiz = Quiz.query.filter_by(id = quiz_id).first()
+        if not quiz:
+            flash("Quiz not found")
+            return redirect(url_for("home"))
+        
+        questions = Question.query.filter_by(quiz_id = quiz_id).all()
+        if not questions:
+            flash("No questions found")
+            return redirect(url_for("home"))
+        
+        if request.method == "GET":
+            if datetime.now().date() == quiz.date_of_quiz:
+                if 'target_time' not in session:
+                    target_time = datetime.now() + timedelta(minutes = quiz.duration)
+                    session["target_time"] = target_time.isoformat()
+                targettime = session["target_time"]
+                return render_template("attempt_quiz.html",quiz = quiz, questions = questions, target_time = targettime)
+            elif datetime.now().date() < quiz.date_of_quiz:
+                flash("Quiz has not started yet")
+                return redirect(url_for("home"))
+            else:
+                flash("Quiz has already ended")
+                return redirect(url_for("home"))
+        
+        if request.method == "POST":
+            user_answers = {}
+            for question in questions:
+                user_answers[str(question.id)] = request.form.get(str(question.id),None)
+            score = 0
+            result = []
+            
+            for question in questions:
+                if user_answers[str(question.id)] == question.correct_option:
+                    score += 1
+            
+            for question in questions:
+                result.append({
+                    "question_statement": question.question_statement,
+                    "option1": question.option1,
+                    "option2": question.option2,
+                    "option3": question.option3,
+                    "option4": question.option4,
+                    "user_answer": user_answers[str(question.id)],
+                    "correct_answer": question.correct_option,
+                    "is_correct": user_answers[str(question.id)] == question.correct_option
+            })
+
+            user_email = session.get('user_email', None)
+            user = User.query.filter_by(user_email = user_email).first()
+
+            if not user:
+                flash("User not found")
+                return redirect(url_for("login"))
+
+            results = Result(
+                user_id = user.id,
+                quiz_id = quiz.id,
+                score = score,
+                time_stamp_of_attempt = datetime.now()
+            )
+
+            result1 = Result.query.filter_by(user_id = user.id, quiz_id = quiz.id).first()
+            if result1:
+                flash("The score of your first attempt will be considered for the result...You can attempt the quiz any number of times...")
+                return render_template("result.html",quiz = quiz, score = score, result = result)
+
+            for question in questions:
+                user_answer = UserAnswers(
+                    user_id = user.id,
+                    question_id = question.id,
+                    answer = user_answers[str(question.id)]
+                )
+                db.session.add(user_answer)
+            
+            db.session.add(results)
+            db.session.commit()
+
+        return render_template("result.html",quiz = quiz, score = score, result = result)
+        
+    else:
+        flash("You are not authorized to access this page")
+        return redirect(url_for("home"))
+    
+
+            
     

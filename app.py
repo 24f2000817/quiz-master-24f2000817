@@ -1,6 +1,6 @@
 
 from flask import Flask, render_template
-from controllers.database import db, User
+from controllers.database import *
 from controllers.config import config
 from datetime import datetime
 
@@ -24,17 +24,68 @@ with app.app_context():
         db.session.add(user_admin)
     db.session.commit()
 
+
+    user_user = User.query.filter_by(user_email = "user1@gmail.com").first()
+    if not user_user:
+        user_user = User(
+            username = "user1",
+            user_email = "user1@gmail.com",
+            password = "user1123",
+            qualification = "PUC",
+            dob = datetime.strptime("2009-01-01", "%Y-%m-%d"),
+            role = "user"
+        )
+        db.session.add(user_user)
+    db.session.commit()
+
+    subject = Subject.query.filter_by(name = "Physics").first()
+    if not subject:
+        subject = Subject(
+            name = "Physics",
+            description = "Physics is a natural science that studies matter, its motion and behavior through space and time, and the related entities of energy and force."
+        )
+        db.session.add(subject)
+    db.session.commit()
+
+    chapter = Chapter.query.filter_by(name = "Units and Measurement").first()
+    if not chapter:
+        chapter = Chapter(
+            name = "Units and Measurement",
+            subject_id = 1,
+            description = "Units and Measurement is a fundamental part of physics that deals with the measurement of physical quantities, such as length, mass, time, and temperature."
+        )
+        db.session.add(chapter)
+    db.session.commit()
+
+    quiz = Quiz.query.filter_by(chapter_id = 1).first()
+    if not quiz:
+        quiz = Quiz(
+            chapter_id = 1,
+            date_of_quiz = datetime.strptime("2025-04-01", "%Y-%m-%d"),
+            duration = 60,
+            remarks = "This is a sample quiz"
+        )
+        db.session.add(quiz)
+    db.session.commit()
+
+    question = Question.query.filter_by(quiz_id = 1).first()
+    if not question:
+        question = Question(
+            quiz_id = 1,    
+            question_title = "SI Unit",
+            question_statement = "What is the SI unit of force?",
+            option1 = "Newton",
+            option2 = "Meter",
+            option3 = "Second",
+            option4 = "Ampere",
+            correct_option = "Newton"
+        )
+        db.session.add(question)
+    db.session.commit()
+
 from controllers.authentication import *
 from controllers.routes import *
 from controllers.edit_routes import *
-
-def no_of_questions(chapter_id):
-    chapter = Chapter.query.filter_by(id = chapter_id).first()
-
-    no_of_questions = sum([len(quiz.questions) for quiz in chapter.quizzes])
-    return no_of_questions
-
-app.jinja_env.globals.update(no_of_questions = no_of_questions)
 
 if __name__ == "__main__":
     app.run(debug=True)

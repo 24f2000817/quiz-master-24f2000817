@@ -90,15 +90,9 @@ def edit_quiz(quiz_id):
         if request.method == "POST":
             chapters = Chapter.query.all()
             chapter_id = request.form.get("chapter_id",None)
-            title = request.form.get("title",None)
             date_of_quiz = request.form.get("date",None)
-            time_of_quiz = request.form.get("time",None)
             duration = request.form.get("duration",None)
             remarks = request.form.get("remarks",None)
-
-            if not title:
-                flash("Title is required")
-                return redirect(url_for("edit_quiz",quiz_id = quiz_id))
 
             if not chapter_id:
                 flash("Chapter is required")
@@ -106,10 +100,6 @@ def edit_quiz(quiz_id):
             
             if not date_of_quiz:
                 flash("Date is required")
-                return redirect(url_for("edit_quiz",quiz_id = quiz_id))
-            
-            if not time_of_quiz:
-                flash("Time is required")
                 return redirect(url_for("edit_quiz",quiz_id = quiz_id))
             
             if not duration:
@@ -125,13 +115,10 @@ def edit_quiz(quiz_id):
                 time_of_quiz = time_of_quiz + ":00"
             
             date_of_quiz = datetime.strptime(date_of_quiz, "%Y-%m-%d").date()
-            time_of_quiz = datetime.strptime(time_of_quiz, "%H:%M:%S").time()
             duration = int(duration)
 
             quiz.chapter_id = chapter_id
-            quiz.title = title
             quiz.date_of_quiz = date_of_quiz
-            quiz.time_of_quiz = time_of_quiz
             quiz.duration = duration
             quiz.remarks = remarks
 
@@ -203,7 +190,7 @@ def edit_question(question_id):
             question.option2 = option2
             question.option3 = option3
             question.option4 = option4
-            question.correct_option = currect_option
+            question.correct_option = correct_option
 
             db.session.commit()
 
@@ -214,3 +201,20 @@ def edit_question(question_id):
     else:
         flash("You are not authorized to access this page")
         return redirect(url_for("quiz_management"))
+    
+def no_of_questions(chapter_id):
+    chapter = Chapter.query.filter_by(id = chapter_id).first()
+
+    no_of_questions = sum([len(quiz.questions) for quiz in chapter.quizzes])
+    return no_of_questions
+
+def quiz_questions(quiz_id):
+    quiz = Quiz.query.filter_by(id = quiz_id).first()
+
+    no_of_questions = len(quiz.questions)
+    return no_of_questions
+
+
+app.jinja_env.globals.update(no_of_questions = no_of_questions, quiz_questions = quiz_questions)
+
+

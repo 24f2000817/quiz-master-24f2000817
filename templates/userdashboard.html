@@ -1,1 +1,72 @@
 <h1 class="text-center">User</h1>
+<div>
+    <div class="card border-primary m-5">
+        <div class="card-body">
+            <h3 class="text-center">Upcoming Quizzes </h3>
+            <hr style="border: 1px solid #000; width: 100%; margin: 20px auto;">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Subject</th>
+                    <th scope="col">Chapter</th>
+                    <th scope="col">No of Questions</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Duration</th>
+                    <th scope="col">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for quiz in quizzes %}
+                    <tr>
+                        <th scope="row">{{quiz.id}} </th>
+                        <td>{{quiz.chapter.subject.name}}</td>
+                        <td>{{quiz.chapter.name}}</td>
+                        <td>{{quiz_questions(quiz.id)}}</td>
+                        <td>{{quiz.date_of_quiz}}</td>
+                        <td>{{quiz.duration}} min</td>
+                        <td>
+                            <a class="btn btn-outline-danger m-1" href="{{url_for('attempt_quiz', quiz_id = quiz.id)}}" role="Delete">Start</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="container-fluid row justify-content-center">
+    {% for sub in subjects %}
+        <div class="col-12 col-sm-12 col-md-6 col-lg-6">
+            <div class="card border-primary">
+                <div class="card-body">
+                    <h3 class="text-center">{{sub.name}} </h3>
+                    <div class="d-flex align-items-center">
+                        <p>{{sub.description}}</p>
+                    </div>
+                    <hr style="border: 1px solid #000; width: 100%; margin: 20px auto;">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">S.No</th>
+                            <th scope="col">Chapter Name</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">No of Questions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for chap in chapters if chap.subject_id == sub.id %}
+                            <tr>
+                                <th scope="row">{{loop.index}} </th>
+                                <td>{{chap.name}}</td>
+                                <td>{{chap.description}}</td>
+                                <td>{{ no_of_questions(chap.id) }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div> 

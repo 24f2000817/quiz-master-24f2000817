@@ -13,7 +13,8 @@ class User(db.Model):
     dob = db.Column(db.Date , nullable=False)
     role = db.Column(db.String(10), nullable=False)
     
-    scores = db.relationship('Score', backref='user', lazy=True)
+    results = db.relationship('Result', backref='user', lazy=True, cascade="all, delete-orphan")
+    user_answers = db.relationship('UserAnswers', backref='user', lazy=True, cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<User(id={self.id}, username={self.username})>"
@@ -42,14 +43,13 @@ class Chapter(db.Model):
 
 class Quiz(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    title = db.Column(db.String(100), nullable=False)
     chapter_id = db.Column(db.Integer, db.ForeignKey('chapter.id'), nullable=False)
     date_of_quiz = db.Column(db.Date , nullable=False)
-    time_of_quiz = db.Column(db.Time , nullable=False)
     duration = db.Column(db.Integer, nullable=False)
     remarks = db.Column(db.Text, nullable=True)
 
     questions = db.relationship('Question', backref='quiz', lazy=True, cascade="all, delete-orphan")
+    results = db.relationship('Result', backref='quiz', lazy=True, cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<Quiz(id={self.id}, title={self.title})>"
@@ -59,7 +59,7 @@ class Question(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     quiz_id = db.Column(db.Integer, db.ForeignKey('quiz.id'), nullable=False)
-    question_title = db.Column(db.String(100), nullable=False)
+    question_title = db.Column(db.String(50),nullable = False)
     question_statement = db.Column(db.Text, nullable=False)
     option1 = db.Column(db.String(100), nullable=False)
     option2 = db.Column(db.String(100), nullable=False)
@@ -67,15 +67,27 @@ class Question(db.Model):
     option4 = db.Column(db.String(100), nullable=False)
     correct_option = db.Column(db.String(100), nullable=False)
 
+    user_answers = db.relationship('UserAnswers', backref='question', lazy=True, cascade="all, delete-orphan")
+
     def __repr__(self):
         return f"<Question(id={self.id}, question={self.question})>"
 
-class Score(db.Model):
-    __tablename__ = 'scores'
+class Result(db.Model):
+    __tablename__ = 'results'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    quiz_id = db.Column(db.Integer, db.ForeignKey('quiz.id'), nullable=False)
     score = db.Column(db.Integer, nullable=False)
+    time_stamp_of_attempt = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
         return f"<Score(id={self.id}, score={self.score})>"
+    
+class UserAnswers(db.Model):
+    __tablename__ = 'user_answers'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), nullable=False)
+    answer = db.Column(db.String(100))

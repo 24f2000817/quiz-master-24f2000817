@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Result - QuizMaster{% endblock title %}
+{% block body %}
+<h3 class="text-center">{{quiz.chapter.subject.name}}</h3>
+<h3 class="text-center">{{quiz.chapter.name}}</h3>
+<div>
+    <div class="m-5">
+         Score = {{score}}/{{quiz_questions(quiz.id)}}
+    </div>
+    {% for res in result %}
+        <div class="card border-primary m-5">
+            <div class="card-header" style="background-color: #93f0fe;">
+                {{loop.index}}. {{res.question_statement}}
+            </div>
+            <div class="form-check m-2 mt-3">
+                <p>1. {{res.option1}}</p>
+            </div>
+            <div class="form-check m-2" >
+                <p>2. {{res.option2}}</p>
+            </div>
+            <div class="form-check m-2">
+                <p>3. {{res.option3}}</p>
+            </div>
+            <div class="form-check m-2">
+                <p>4. {{res.option4}}</p>
+            </div>
+            <div class="form-check m-2">
+                <p>Your Answer : {{res.user_answer}}</p>
+            </div>
+            <div class="form-check m-2">
+                <p>Correct Answer : {{res.correct_answer}}</p>
+            </div>
+            <div class="form-check m-2 mb-3">
+                <p style="font-weight: bold;">
+                    {% if res.is_correct %}
+                        Correct
+                    {% else %}
+                        Wrong
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    {% endfor %}
+    <div class="d-flex justify-content-center">
+        <a class="btn btn-outline-primary m-5" href="{{url_for('home')}}" role="button">Back</a> 
+    </div>
+</div>
+{% endblock body %}

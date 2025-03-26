@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Attempt Quiz - QuizMaster{% endblock title %}
+{% block body %}
+<h3 class="text-center">{{quiz.chapter.subject.name}}</h3>
+<h3 class="text-center">{{quiz.chapter.name}}</h3>
+<div class="timer" id="timer" style="text-align: center; font-size: 1rem; color: #000000;position: fixed; top: 80px; right: 30px; z-index: 1000; background-color: #82cefd; padding: 10px; border-radius: 5px; border: 2px solid #f90303; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); font-weight: bold; font-family: 'Times New Roman', Times, serif;  letter-spacing: 1px; text-transform: uppercase; "></div>
+<div>
+    <form method="POST" action="{{url_for('attempt_quiz', quiz_id = quiz.id)}}">
+        {% for que in questions %}
+            <div class="card border-primary m-5">
+                <div class="card-header" style="background-color: #93f0fe;">
+                    {{loop.index}}. {{que.question_statement}}
+                </div>
+                <div class="form-check m-2 mt-3">
+                    <input class="form-check-input" type="radio" name="{{que.id}}" id="flexRadioDefault1" value="{{que.option1}}">
+                    <label class="form-check-label" for="flexRadioDefault1">{{que.option1}}</label>
+                </div>
+                <div class="form-check m-2" >
+                    <input class="form-check-input" type="radio" name="{{que.id}}" id="flexRadioDefault1" value = "{{que.option2}}">
+                    <label class="form-check-label" for="flexRadioDefault1">{{que.option2}}</label>
+                </div>
+                <div class="form-check m-2">
+                    <input class="form-check-input" type="radio" name="{{que.id}}" id="flexRadioDefault1" value="{{que.option3}}">
+                    <label class="form-check-label" for="flexRadioDefault1">{{que.option3}}</label>
+                </div>
+                <div class="form-check m-2 mb-3">
+                    <input class="form-check-input" type="radio" name="{{que.id}}" id="flexRadioDefault1" value="{{que.option4}}">
+                    <label class="form-check-label" for="flexRadioDefault1">{{que.option4}}</label>
+                </div>
+            </div>
+        {% endfor %}
+        <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+</div>
+<script>
+    var target_time = new Date("{{target_time}}").getTime();
+
+    var timer = setInterval(function(){
+        var current_time = new Date().getTime()
+
+        var distance = target_time - current_time
+
+        var h = Math.floor((distance % (1000*60*60*24))/(1000*60*60))
+        var m = Math.floor((distance%(1000*60*60))/(1000*60))
+        var s = Math.floor((distance%(1000*60))/(1000))
+
+        document.getElementById("timer").innerHTML = h + " : " + m + " : " + s ;
+
+        if (distance<0) {
+            clearInterval(timer);
+            document.getElementById("timer").innerHTML = "TIME UP!";
+        }
+    },1000);
+</script>
+{% endblock body %}

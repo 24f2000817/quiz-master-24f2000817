@@ -402,7 +402,7 @@ def attempt_quiz(quiz_id):
 
             if not user:
                 flash("User not found")
-                return redirect(url_for("login"))
+                return redirect(url_for("home"))
 
             results = Result(
                 user_id = user.id,
@@ -412,6 +412,7 @@ def attempt_quiz(quiz_id):
             )
 
             result1 = Result.query.filter_by(user_id = user.id, quiz_id = quiz.id).first()
+            
             if result1:
                 flash("The score of your first attempt will be considered for the result...You can attempt the quiz any number of times...")
                 return render_template("result.html",quiz = quiz, score = score, result = result)

@@ -51,7 +51,8 @@ def logout():
     
     session.pop("user_email")
     session.pop("user_role")
-    session.pop("target_time")
+    if 'target_time' in session:
+        session.pop("target_time")
 
     flash("...Logged out successfully...")
     return redirect(url_for("login"))

@@ -346,6 +346,8 @@ def delete_user(user_id):
     else:
         flash("You are not authorized to access this page")
         return redirect(url_for("home"))
+
+# most part of milestone 5 was done while working on quiz attempt page
     
 @app.route("/attempt_quiz/<int:quiz_id>" , methods = ["GET","POST"])
 def attempt_quiz(quiz_id):
@@ -415,7 +417,7 @@ def attempt_quiz(quiz_id):
             
             if result1:
                 flash("The score of your first attempt will be considered for the result...You can attempt the quiz any number of times...")
-                return render_template("result.html",quiz = quiz, score = score, result = result)
+                return render_template("result.html",quiz = quiz, score = score, result = result, time_stamp_of_attempt = datetime.now())
 
             for question in questions:
                 user_answer = UserAnswers(
@@ -434,6 +436,70 @@ def attempt_quiz(quiz_id):
         flash("You are not authorized to access this page")
         return redirect(url_for("home"))
     
+@app.route("/scores")
+def scores():
+    if session.get('user_role', None) == 'user':
+        user_email = session.get('user_email', None)
+        user = User.query.filter_by(user_email = user_email).first()
+        if not user:
+            flash("User not found")
+            return redirect(url_for("home"))
+        
+        results = Result.query.filter_by(user_id = user.id).all()
 
+        return render_template("scores.html",results = results)
+    
+    else:
+        flash("You are not authorized to access this page")
+        return redirect(url_for("home"))
+    
+@app.route("/result_view/<int:quiz_id>")
+def result_view(quiz_id):
+    if session.get('user_role', None) == 'user':
+        quiz = Quiz.query.filter_by(id = quiz_id).first()
+        if not quiz:
+            flash("Quiz not found")
+            return redirect(url_for("scores"))
+        
+        user_email = session.get('user_email', None)
+        user = User.query.filter_by(user_email = user_email).first()
+        if not user:
+            flash("User not found")
+            return redirect(url_for("home"))
+        
+        results = Result.query.filter_by(user_id = user.id, quiz_id = quiz.id).first()
+        if not results:
+            flash("Result not found")
+            return redirect(url_for("scores"))
+        
+        user_answers = UserAnswers.query.filter_by(user_id = user.id).all()
+        if not user_answers:
+            flash("User answers not found")
+            return redirect(url_for("scores"))
+        
+        questions = Question.query.filter_by(quiz_id = quiz.id).all()
+        if not questions:
+            flash("Questions not found")
+            return redirect(url_for("scores"))
+        
+        result = []
+        for question in questions:
+            for user_answer in user_answers:
+                if user_answer.question_id == question.id:
+                    result.append({
+                        "question_statement": question.question_statement,
+                        "option1": question.option1,
+                        "option2": question.option2,
+                        "option3": question.option3,
+                        "option4": question.option4,
+                        "user_answer": user_answer.answer,
+                        "correct_answer": question.correct_option,
+                        "is_correct": user_answer.answer == question.correct_option
+                    })
+        
+        return render_template("result.html",quiz = quiz, score = results.score, result = result, time_stamp_of_attempt = results.time_stamp_of_attempt)
+    else:
+        flash("You are not authorized to access this page")
+        return redirect(url_for("home"))
             
     

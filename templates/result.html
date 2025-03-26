@@ -5,7 +5,8 @@
 <h3 class="text-center">{{quiz.chapter.name}}</h3>
 <div>
     <div class="m-5">
-         Score = {{score}}/{{quiz_questions(quiz.id)}}
+        Date, Time : {{time_stamp_of_attempt}}<br>
+        Score = {{score}}/{{quiz_questions(quiz.id)}}
     </div>
     {% for res in result %}
         <div class="card border-primary m-5">

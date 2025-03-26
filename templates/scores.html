@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Scores - QuizMaster{% endblock title %}
+{% block body %}
+<div>
+    <div class="card border-primary m-5">
+        <div class="card-body">
+            <h3 class="text-center">Upcoming Quizzes </h3>
+            <hr style="border: 1px solid #000; width: 100%; margin: 20px auto;">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">S.No</th>
+                    <th scope="col">Subject</th>
+                    <th scope="col">Chapter</th>
+                    <th scope="col">No of Questions</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Score</th>
+                    <th scope="col">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for result in results %}
+                    <tr>
+                        <th scope="row">{{loop.index}} </th>
+                        <td>{{result.quiz.chapter.subject.name}}</td>
+                        <td>{{result.quiz.chapter.name}}</td>
+                        <td>{{quiz_questions(result.quiz.id)}}</td>
+                        <td>{{result.quiz.date_of_quiz}}</td>
+                        <td>{{result.quiz.duration}} min</td>
+                        <td>
+                            <a class="btn btn-outline-primary m-1" href="{{url_for('result_view', quiz_id = result.quiz_id)}}" role="button">View</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock body %}

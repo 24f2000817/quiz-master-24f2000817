@@ -24,7 +24,8 @@ with app.app_context():
         db.session.add(user_admin)
     db.session.commit()
 
-
+# I am creating sample data for testing purposes as when I make changes in database all the data will be deleted
+# so I am creating sample data here only for my reference, This will not be added in production
     user_user = User.query.filter_by(user_email = "user1@gmail.com").first()
     if not user_user:
         user_user = User(

@@ -110,6 +110,7 @@ def add_quiz():
         if request.method == "POST":
             chapters = Chapter.query.all()
             chapter_id = request.form.get("chapter_id",None)
+            name = request.form.get("name",None)
             date_of_quiz = request.form.get("date",None)
             duration = request.form.get("duration",None)
             remarks = request.form.get("remarks",None)
@@ -117,6 +118,10 @@ def add_quiz():
             if not chapter_id:
                 flash("Chapter is required")
                 return redirect(url_for("add_quiz",chapters = chapters))
+            
+            if not name:
+                flash("Name is required")
+                return redirect(url_for("add_quiz", chapters = chapters))
             
             if not date_of_quiz:
                 flash("Date is required")
@@ -136,6 +141,7 @@ def add_quiz():
 
             new_quiz = Quiz(
                 chapter_id = chapter_id,
+                name = name,
                 date_of_quiz = date_of_quiz,
                 duration = duration,
                 remarks = remarks
@@ -502,4 +508,24 @@ def result_view(quiz_id):
         flash("You are not authorized to access this page")
         return redirect(url_for("home"))
             
-    
+@app.route("/search")
+def search():
+    search_type = request.args.get('search_type', None)
+    search = request.args.get('search', None)
+    if session.get('user_role', None):
+        if search_type == "subject":
+            results = Subject.query.filter_by(name = search).all()
+        if search_type == "chapter":
+            results = Chapter.query.filter_by(name = search ).all()
+        if search_type == "quiz":
+            results = Quiz.query.filter_by(name = search).all()
+        if session.get('user_role',None) == 'admin':
+            if search_type == "user":
+                results = User.query.filter_by(username = search).all()
+            if search_type == "question":
+                results = Question.query.filter_by(question_title = search ).all()
+                
+        return render_template("search_result.html",results = results,search_type = search_type)
+    else:
+        flash("You are not authorized to access this page")
+        return redirect(url_for("home"))

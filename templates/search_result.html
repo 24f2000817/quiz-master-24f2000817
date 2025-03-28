@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}Search Result - QuizMaster{% endblock title %}
+{% block body %}
+<div><h1 class = "text-center">Your Search Results</h1></div>
+<div>
+    {% if results %}
+    <div class="card border-primary m-5">
+        <div class="card-body">
+            <table class="table table-hover" style="text-align: center;">
+                {% if search_type == "user"%}
+                <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Qualification</th>
+                    <th scope="col">DOB</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for result in results %}
+                    <tr>
+                        <th scope="row">{{result.id}} </th>
+                        <td>{{result.username}}</td>
+                        <td>{{result.user_email}}</td>
+                        <td>{{result.qualification}}</td>
+                        <td>{{result.dob}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            {% elif search_type == "subject" or search_type =="chapter" %}
+            <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>Name</td>
+                    <td>Description</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                    <tr>
+                        <th scope="row">{{result.id}}</th>
+                        <td>{{result.name}}</td>
+                        <td>{{result.description}} </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            {% elif search_type == "quiz"%}
+            <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>Name</td>
+                    <td>Chapter</td>
+                    <td>Date</td>
+                    <td>Duration</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                    <tr>
+                        <th scope="row">{{result.id}}</th>
+                        <td>{{result.name}}</td>
+                        <td>{{result.chapter.name}}</td>
+                        <td>{{result.date_of_quiz}}</td>
+                        <td>{{result.duration}} min</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            {% elif search_type == "question" %}
+            <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>Quiz</td>
+                    <td>Chapter</td>
+                    <td>Question title</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                    <tr>
+                        <th scope="row">{{result.id}}</th>
+                        <td>{{result.quiz.name}}</td>
+                        <td>{{result.quiz.chapter.name}}</td>
+                        <td>{{result.question_title}} </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            {% endif %}
+
+            </table>
+        </div>
+    </div>
+    {% else %}
+        <div class="card border-primary m-5">
+            <div class="card-body">
+                <h3 class="text-center">No Results Found</h3>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock body %}

@@ -89,6 +89,7 @@ def edit_quiz(quiz_id):
         
         if request.method == "POST":
             chapters = Chapter.query.all()
+            name = request.form.get("name",None)
             chapter_id = request.form.get("chapter_id",None)
             date_of_quiz = request.form.get("date",None)
             duration = request.form.get("duration",None)
@@ -96,6 +97,10 @@ def edit_quiz(quiz_id):
 
             if not chapter_id:
                 flash("Chapter is required")
+                return redirect(url_for("edit_quiz",quiz_id = quiz_id))
+            
+            if not name:
+                flash("Name is required")
                 return redirect(url_for("edit_quiz",quiz_id = quiz_id))
             
             if not date_of_quiz:
@@ -118,6 +123,7 @@ def edit_quiz(quiz_id):
             duration = int(duration)
 
             quiz.chapter_id = chapter_id
+            quiz.name = name
             quiz.date_of_quiz = date_of_quiz
             quiz.duration = duration
             quiz.remarks = remarks

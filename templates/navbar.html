@@ -46,12 +46,31 @@
               </li>
             {% endif %}
           {% endif %}
-          
-        </ul>
-        <form class="d-flex" role="search">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success" type="submit">Search</button>
-        </form>
+        
+        {% if session.get('user_role', None)%}
+          </ul>
+          <form class="d-flex" role="search" action="{{url_for('search')}}">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search">
+            {% if session.get('user_role', None) == 'admin' %}
+              <select class="form-select me-2" aria-label="Default select example" name="search_type">
+                <option selected>Select</option>
+                <option value="user">User</option>
+                <option value="subject">Subject</option>
+                <option value="chapter">Chapter</option>
+                <option value="quiz">Quiz</option>
+                <option value="question">Question</option>
+              </select>
+              {% elif session.get('user_role', None) == 'user' %}
+              <select class="form-select me-2" aria-label="Default select example" name="search_type">
+                <option selected>Select</option>
+                <option value="subject">Subject</option>
+                <option value="chapter">Chapter</option>
+                <option value="quiz">Quiz</option>
+              </select>
+            {% endif %}
+            <input class="btn btn-outline-success" type="submit" value="Search">
+          </form>  
+        {% endif %}
       </div>
     </div>
   </nav>

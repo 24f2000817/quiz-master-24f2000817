@@ -116,9 +116,6 @@ def edit_quiz(quiz_id):
                 flash("Chapter not found")
                 return redirect(url_for("edit_quiz",quiz_id = quiz_id))
             
-            if len(time_of_quiz.split(':')) == 2:  # HH:MM format
-                time_of_quiz = time_of_quiz + ":00"
-            
             date_of_quiz = datetime.strptime(date_of_quiz, "%Y-%m-%d").date()
             duration = int(duration)
 

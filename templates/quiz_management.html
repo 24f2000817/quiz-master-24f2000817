@@ -1,48 +1,51 @@
 {% extends 'base.html' %}
 {% block title %}Quiz Management - QuizMaster{% endblock title %}
 {% block body %}
-<h1 class="text-center">Admin</h1>
-<div class="container-fluid row justify-content-center">
-    {% for quiz in quizzes %}
-        <div class="col-12 col-sm-12 col-md-6 col-lg-6">
-            <div class="card border-primary">
-                <div class="card-body">
-                    <h3 class="text-center">{{quiz.chapter.subject.name}} - {{quiz.chapter.name}} - {{quiz.name}}
-                    </h3>
-                    <div class="d-flex justify-content-end">
-                        <a class="btn btn-outline-primary m-1" href="{{url_for('edit_quiz', quiz_id = quiz.id)}}" role="button">Edit</a>
-                        <a class="btn btn-outline-danger m-1" href="{{url_for('delete_quiz', quiz_id = quiz.id)}}" role="Delete">Delete</a>
-                    </div>
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th scope="col">S.No</th>
-                            <th scope="col">Question Title</th>
-                            <th scope="col">Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for que in questions if que.quiz_id == quiz.id %}
+<div>
+    <div class="container-fluid row justify-content-center">
+        {% for quiz in quizzes %}
+            <div class="col-12 col-sm-12 col-md-6 col-lg-6">
+                <div class="card border-primary mt-5 m-3" >
+                    <div class="card-body">
+                        <h3 class="text-center">{{quiz.chapter.subject.name}} - {{quiz.chapter.name}} - {{quiz.name}}
+                        </h3>
+                        <div class="d-flex justify-content-end">
+                            <a class="btn btn-outline-primary m-1" href="{{url_for('edit_quiz', quiz_id = quiz.id)}}" role="button">Edit</a>
+                            <a class="btn btn-outline-danger m-1" href="{{url_for('delete_quiz', quiz_id = quiz.id)}}" role="Delete">Delete</a>
+                        </div>
+                        <table class="table table-hover">
+                            <thead>
                             <tr>
-                                <th scope="row">{{loop.index}} </th>
-                                <td>{{que.question_title}}</td>
-                                <td>
-                                    <a class="btn btn-outline-primary" href="{{url_for('edit_question', question_id = que.id)}}" role="button">Edit</a>
-                                    <a class="btn btn-outline-danger" href="{{url_for('delete_question', question_id = que.id)}}" role="Delete">Delete</a>
-                                </td>
+                                <th scope="col">S.No</th>
+                                <th scope="col">Question Title</th>
+                                <th scope="col">Action</th>
                             </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                    <div class="d-flex justify-content-center">
-                        <a class="btn btn-outline-primary" href="{{url_for('add_question', quiz_id = quiz.id)}}" role="button">Add Question</a>
+                            </thead>
+                            <tbody>
+                            {% for que in questions if que.quiz_id == quiz.id %}
+                                <tr>
+                                    <th scope="row">{{loop.index}} </th>
+                                    <td>{{que.question_title}}</td>
+                                    <td>
+                                        <a class="btn btn-outline-primary" href="{{url_for('edit_question', question_id = que.id)}}" role="button">Edit</a>
+                                        <a class="btn btn-outline-danger" href="{{url_for('delete_question', question_id = que.id)}}" role="Delete">Delete</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="d-flex justify-content-center">
+                            <a class="btn btn-outline-primary" href="{{url_for('add_question', quiz_id = quiz.id)}}" role="button">Add Question</a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    {% endfor %}
-</div> 
-<div class="d-flex justify-content-center">
-    <a class="btn btn-outline-primary m-5" href="{{url_for('add_quiz')}}" role="button">Add Quiz</a>
+        {% endfor %}
+    </div> 
+    <div class="d-flex justify-content-center">
+        <a class="btn btn-outline-primary m-5" href="{{url_for('add_quiz')}}" role="button">Add Quiz</a>
+    </div>
 </div>
+
+
 {% endblock body %}

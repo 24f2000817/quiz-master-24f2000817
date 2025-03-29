@@ -4,7 +4,7 @@
 <div>
     <div class="card border-primary m-5">
         <div class="card-body">
-            <h3 class="text-center">Upcoming Quizzes </h3>
+            <h3 class="text-center">Past Attempts </h3>
             <hr style="border: 1px solid #000; width: 100%; margin: 20px auto;">
             <table class="table table-hover">
                 <thead>
@@ -26,7 +26,7 @@
                         <td>{{result.quiz.chapter.name}}</td>
                         <td>{{quiz_questions(result.quiz.id)}}</td>
                         <td>{{result.quiz.date_of_quiz}}</td>
-                        <td>{{result.quiz.duration}} min</td>
+                        <td>{{result.score}}/{{quiz_questions(result.quiz.id)}}</td>
                         <td>
                             <a class="btn btn-outline-primary m-1" href="{{url_for('result_view', quiz_id = result.quiz_id)}}" role="button">View</a>
                         </td>

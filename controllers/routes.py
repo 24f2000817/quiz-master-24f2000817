@@ -529,3 +529,74 @@ def search():
     else:
         flash("You are not authorized to access this page")
         return redirect(url_for("home"))
+    
+@app.route("/summary")
+def summary():
+    if session.get('user_role', None) == 'user':
+        user_email = session.get('user_email', None)
+        user = User.query.filter_by(user_email = user_email).first()
+
+        quizzes = Quiz.query.all()
+        data = []
+
+        for quiz in quizzes:
+            results = Result.query.filter_by(user_id = user.id, quiz_id = quiz.id).first()
+            if not results:
+                score = 0
+            else:
+                score = results.score*100/len(Question.query.filter_by(quiz_id = results.quiz.id).all())
+            
+            data.append({
+                'name': quiz.name,
+                'score': score
+            })
+
+            chart = {
+                'labels':[data['name'] for data in data],
+                'datasets':[
+                    {
+                        'label': 'Percentage Score',
+                        'data': [data['score'] for data in data],
+                        'backgroundColor': 'rgba(54, 162, 235, 0.2)',
+                        'borderColor': 'rgba(54, 162, 235, 1)',
+                        'borderWidth': 1
+                    }
+                ]
+            }
+
+        return render_template("summary.html",chart = chart)
+    
+    if session.get('user_role', None) == 'admin':
+        quizzes = Quiz.query.all()
+        data = []
+
+        for quiz in quizzes:
+            results = Result.query.filter_by(quiz_id = quiz.id).all()
+            if not results:
+                score = 0
+            else:
+                score = sum(result.score for result in results)*100/len(results)
+            
+            data.append({
+                'name': quiz.name,
+                'score': score
+            })
+
+            chart = {
+                'labels':[data['name'] for data in data],
+                'datasets':[
+                    {
+                        'label': 'AverageScore',
+                        'data': [data['score'] for data in data],
+                        'backgroundColor': 'rgba(54, 162, 235, 0.2)',
+                        'borderColor': 'rgba(54, 162, 235, 1)', 
+                        'borderWidth': 1
+                    }
+                ]
+            }
+
+        return render_template("summary.html",chart = chart)
+    
+    else:
+        flash("You are not authorized to access this page")
+        return redirect(url_for("home"))

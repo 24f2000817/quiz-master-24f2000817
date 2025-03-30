@@ -7,7 +7,12 @@ from datetime import datetime
 def home():
     subjects = Subject.query.all()
     chapters = Chapter.query.all()
-    quizzes = Quiz.query.all()
+    quizs = Quiz.query.all()
+    quizzes = []
+    for quiz in quizs:
+        if quiz.date_of_quiz >= datetime.now().date():
+            quizzes.append(quiz)
+
     return render_template("home.html", subjects = subjects, chapters = chapters, quizzes = quizzes)
 
 @app.route("/add_subject" , methods = ["GET","POST"])
@@ -545,9 +550,11 @@ def summary():
                 score = 0
             else:
                 score = results.score*100/len(Question.query.filter_by(quiz_id = results.quiz.id).all())
+
+            quizlabel = quiz.name + " - " + quiz.chapter.name
             
             data.append({
-                'name': quiz.name,
+                'name': quizlabel,
                 'score': score
             })
 
@@ -575,10 +582,12 @@ def summary():
             if not results:
                 score = 0
             else:
-                score = sum(result.score for result in results)*100/len(results)
+                score = sum([results.score*100/len(Question.query.filter_by(quiz_id = results.quiz.id).all()) for results in results])/len(results)
+
+            quizlabel = quiz.name + " - " + quiz.chapter.name
             
             data.append({
-                'name': quiz.name,
+                'name': quizlabel,
                 'score': score
             })
 

@@ -16,9 +16,6 @@ class User(db.Model):
     results = db.relationship('Result', backref='user', lazy=True, cascade="all, delete-orphan")
     user_answers = db.relationship('UserAnswers', backref='user', lazy=True, cascade="all, delete-orphan")
 
-    def __repr__(self):
-        return f"<User(id={self.id}, username={self.username})>"
-
 class Subject(db.Model):
 
     id = db.Column(db.Integer, primary_key=True , autoincrement=True)
@@ -27,9 +24,6 @@ class Subject(db.Model):
     
     chapters = db.relationship('Chapter', backref='subject', lazy=True, cascade="all, delete-orphan")
 
-    def __repr__(self):
-        return f"<Subject(id={self.id}, name={self.name})>"
-
 class Chapter(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100), nullable=False)
@@ -37,9 +31,6 @@ class Chapter(db.Model):
     description = db.Column(db.Text, nullable=True)
 
     quizzes = db.relationship('Quiz', backref='chapter', lazy=True, cascade="all, delete-orphan")
-
-    def __repr__(self):
-        return f"<Chapter(id={self.id}, name={self.name})>"
 
 class Quiz(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -52,8 +43,6 @@ class Quiz(db.Model):
     questions = db.relationship('Question', backref='quiz', lazy=True, cascade="all, delete-orphan")
     results = db.relationship('Result', backref='quiz', lazy=True, cascade="all, delete-orphan")
 
-    def __repr__(self):
-        return f"<Quiz(id={self.id}, title={self.title})>"
 
 class Question(db.Model):
     __tablename__ = 'questions'
@@ -70,9 +59,6 @@ class Question(db.Model):
 
     user_answers = db.relationship('UserAnswers', backref='question', lazy=True, cascade="all, delete-orphan")
 
-    def __repr__(self):
-        return f"<Question(id={self.id}, question={self.question})>"
-
 class Result(db.Model):
     __tablename__ = 'results'
 
@@ -81,9 +67,6 @@ class Result(db.Model):
     score = db.Column(db.Integer, nullable=False)
     time_stamp_of_attempt = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
-    def __repr__(self):
-        return f"<Score(id={self.id}, score={self.score})>"
     
 class UserAnswers(db.Model):
     __tablename__ = 'user_answers'

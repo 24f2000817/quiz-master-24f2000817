@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Edit Chapter - QuizMaster{% endblock title %}
 {% block body %}
-<div><h1 class = "text-center">Edit Quiz</h1></div>
+<div><h1 class = "text-center" style="color: #07567d;">Edit Quiz</h1></div>
 <div class="container-fluid row justify-content-center">
     <form class = "col-5" action="{{url_for('edit_quiz', quiz_id = quiz.id)}}" method="POST">
         <div class="mb-3">
